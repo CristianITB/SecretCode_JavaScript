@@ -47,24 +47,6 @@ function comprobar(){
 }
 
 function comprobarResultado(){
-    var userNum = getUserNum();
-
-    if (userNum.length != codigo.length){
-        userNum = wrongInput(userNum);
-    }
-
-    //intenté hacer algo aquí para comprobar que no se metiese 
-    //ninguna letra pero no se porque en el pc de classe al hacer
-    //parseInt() de una letra no lo pasa a number y aquí en casa sí.
-    /*
-    for (let i = 0; i < 5; i++) {
-        if (parseInt(userNum[i]) != "number"){
-            userNum = wrongInput(userNum);
-            break;
-        }       
-    }
-    */
-
     let fraseInfo = document.getElementById("info");
     fraseInfo.innerHTML = "Intento número " + (turnos+1) + ".";
 
@@ -72,29 +54,37 @@ function comprobarResultado(){
     let rowResult = document.createElement("div");
     rowResult.setAttribute('class', 'rowResult w100 flex wrap');
 
-    var totalCorrect = 0
+    var userNum = getUserNum();
 
-    for(j = 0; j <= codigo.length-1; j++){
+    if (userNum.length != codigo.length || onlyNumbers(userNum) == false){
+        wrongInput(userNum);
+    } else{
+        var totalCorrect = 0
 
-        let w20div = document.createElement("div");
-        w20div.setAttribute('class', 'w20');
-        
-        let celResult = document.createElement("div");
-        celResult.innerHTML = userNum[j];
-
-        if(userNum[j] == codigo[j]){
-            totalCorrect++;
-            celResult.setAttribute('class', 'celResult flex correctCel');
-        } else if(codigo.includes(parseInt(userNum[j])) && codigo[j] != userNum[j]){
-            celResult.setAttribute('class', 'celResult flex existingCel');
-        } else{
-            celResult.setAttribute('class', 'celResult flex');
-        }       
-
-        rowResult.appendChild(w20div);
-        w20div.appendChild(celResult);
+        for(j = 0; j <= codigo.length-1; j++){
+    
+            let w20div = document.createElement("div");
+            w20div.setAttribute('class', 'w20');
+            
+            let celResult = document.createElement("div");
+            celResult.innerHTML = userNum[j];
+    
+    
+            if(userNum[j] == codigo[j]){
+                totalCorrect++;
+                celResult.setAttribute('class', 'celResult flex correctCel');
+            } else if(codigo.includes(parseInt(userNum[j])) && codigo[j] != userNum[j]){
+                celResult.setAttribute('class', 'celResult flex existingCel');
+            } else{
+                celResult.setAttribute('class', 'celResult flex');
+            }       
+    
+            rowResult.appendChild(w20div);
+            w20div.appendChild(celResult);
+        }
+        raiz.appendChild(rowResult);
     }
-    raiz.appendChild(rowResult);
+
     document.getElementById('userNum').value = "";
 
     if (totalCorrect == codigo.length){
@@ -111,10 +101,12 @@ function getUserNum(){
 
 function wrongInput(userNum){
     alert(userNum + ": No és válido. Por favor, introduce un número de "+ codigo.length + " cifras.");
-    userNum = ["-", "-", "-", "-", "-"];
     turnos--;
-    return userNum;
 }
+
+function onlyNumbers(userNum) {
+    return (/^[0-9]+$/.test(userNum));
+  }
 
 function endGame(hasWin){
     document.getElementById("comprobar").remove();
